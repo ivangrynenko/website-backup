@@ -82,8 +82,8 @@
 
 - name: Create easy to use copy of the file system
   synchronize:
-    src: {{ ivrh_default_backup_path }}
-    dest: {{ ivrh_website_backup_location }}
+    src: "{{ ivrh_default_backup_path }}"
+    dest: "{{ ivrh_website_backup_location }}"
   become: yes
   when: ivrh_default_backup_path.stat.exists and ivrh_website_backup_location.stat.exists
 
