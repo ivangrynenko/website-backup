@@ -1,4 +1,7 @@
 ---
+- name: Include variables.
+  include_vars: "vars/all.yml"
+
 - name: Define mysql_user_name.
   set_fact:
     mysql_user_name: "{{ __mysql_user_name }}"
