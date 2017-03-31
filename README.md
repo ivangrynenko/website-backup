@@ -26,3 +26,16 @@ Set this variable to path where backup of website files will be located
 
 Path where to upload mysql backup script
 `ivrh_mysql_backup_script_location: "/usr/local/bin/backupmysql"`
+
+## Example playbook
+---
+- name: Backup all websites in all servers
+  hosts: webservers
+  remote_user: ubuntu
+  sudo: yes
+  pre_tasks:
+    - set_fact: default_user_username=yourcustomusername
+
+  vars_files:
+  roles:
+    - { role: website-backup }
