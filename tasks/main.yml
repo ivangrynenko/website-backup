@@ -66,30 +66,30 @@
 
 - name: Check if backup destination directory mysql_backup_location already exist
   stat: path={{ mysql_backup_location }}
-  register: mysql_backup_location_exists
+  register: mysql_backup_location_exists_path
 
 - name: Backup production database to hostname.sql
   command: "{{ ivrh_mysql_backup_script_location }} {{ mysql_days_to_retain_backups_for }} {{ mysql_backup_location }}/"
-  when: mysql_backup_location_exists.stat.exists
+  when: mysql_backup_location_exists_path.stat.exists
 
 - name: Check if backup source directory ivrh_source_backup_path already exist
   stat: path={{ ivrh_source_backup_path }}
-  register: ivrh_source_backup_path
+  register: ivrh_source_backup_path_exists
 
 - name: Check if backup destination directory ivrh_website_backup_destination already exist
   stat: path={{ ivrh_website_backup_destination }}
-  register: ivrh_website_backup_destination
+  register: ivrh_website_backup_destination_path
 
 - name: Create easy to use copy of the file system
   synchronize:
     src: "{{ ivrh_source_backup_path }}"
     dest: "{{ ivrh_website_backup_destination }}"
   become: yes
-  when: ivrh_backup_website
+  when: ivrh_backup_website and ivrh_website_backup_destination_path.stat.exists and ivrh_source_backup_path_exists.stat.exists
 
 - name: Check if backup destination directory mysql_daily_backup_location already exist
   stat: path={{ mysql_daily_backup_location }}
-  register: mysql_daily_backup_location
+  register: mysql_daily_backup_location_path
 
 - name: Ensure cron job created for regular database backups
   cron:
@@ -98,7 +98,7 @@
     hour: "1"
     job: "{{ ivrh_mysql_backup_script_location }} {{ mysql_days_to_retain_backups_for }} {{ mysql_daily_backup_location }}"
     user: "{{ default_backup_user_username }}"
-  when: ivrh_mysql_backup_script_location is defined and mysql_days_to_retain_backups_for is defined and mysql_daily_backup_location.stat.exists
+  when: ivrh_mysql_backup_script_location is defined and mysql_days_to_retain_backups_for is defined and mysql_daily_backup_location_path.stat.exists
 
 - name: Get mysqlbackup script
   template:
