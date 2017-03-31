@@ -85,6 +85,7 @@
     src: "{{ ivrh_source_backup_path }}"
     dest: "{{ ivrh_website_backup_destination }}"
   become: yes
+  when: ivrh_backup_website
 
 - name: Check if backup destination directory mysql_daily_backup_location already exist
   stat: path={{ mysql_daily_backup_location }}
