@@ -70,7 +70,7 @@
   register: mysql_backup_location_exists
 
 - name: Backup production database to hostname.sql
-  command: "{{ ivrh_mysql_backup_script_location }} {{ mysql_days_to_retain_backups_for }} {{ mysql_backup_location }}"
+  command: "{{ ivrh_mysql_backup_script_location }} {{ mysql_days_to_retain_backups_for }} {{ mysql_backup_location }}/"
   when: mysql_backup_location_exists.stat.exists
 
 - name: Check if backup source directory ivrh_default_backup_path already exist
@@ -82,7 +82,7 @@
   register: ivrh_website_backup_location
 
 - name: Create easy to use copy of the file system
-  command: "rsync -avz --delete {{ ivrh_default_backup_path }} {{ ivrh_website_backup_location }}"
+  command: "rsync -avz --delete {{ ivrh_default_backup_path }} {{ ivrh_website_backup_location }}/"
   become: yes
   when: ivrh_default_backup_path.stat.exists and ivrh_website_backup_location.stat.exists
 
