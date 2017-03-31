@@ -1,0 +1,91 @@
+---
+- name: Define mysql_user_name.
+  set_fact:
+    mysql_user_name: "{{ __mysql_user_name }}"
+  when: mysql_user_name is not defined
+
+- name: Define mysql_root_password.
+  set_fact:
+    mysql_root_password: "{{ __mysql_root_password }}"
+  when: mysql_root_password is not defined
+
+- name: Define default_user_username.
+  set_fact:
+    default_user_username: "{{ __default_user_username }}"
+  when: default_user_username is not defined
+
+- name: Define mysql_backup_location.
+  set_fact:
+    mysql_backup_location: "{{ __mysql_backup_location }}"
+  when: mysql_backup_location is not defined
+
+- name: Define mysql_daily_backup_location.
+  set_fact:
+    mysql_daily_backup_location: "{{ __mysql_daily_backup_location }}"
+  when: mysql_daily_backup_location is not defined
+
+- name: Define mysql_days_to_retain_backups_for.
+  set_fact:
+    mysql_days_to_retain_backups_for: "{{ __mysql_days_to_retain_backups_for }}"
+  when: mysql_days_to_retain_backups_for is not defined
+
+- name: Define ivrh_default_backup_path.
+  set_fact:
+    ivrh_default_backup_path: "{{ __ivrh_default_backup_path }}"
+  when: ivrh_default_backup_path is not defined
+
+- name: Define ivrh_mysql_backup_script_location.
+  set_fact:
+    ivrh_mysql_backup_script_location: "{{ __ivrh_mysql_backup_script_location }}"
+  when: ivrh_mysql_backup_script_location is not defined
+
+- name: Define ivrh_website_backup_location.
+  set_fact:
+    ivrh_website_backup_location: "{{ __ivrh_website_backup_location }}"
+  when: ivrh_website_backup_location is not defined
+
+- name: Get mysqlbackup script
+  template:
+    src: "backupmysql.j2"
+    dest: "{{ ivrh_mysql_backup_script_location }}"
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Creates backup folder
+  file: path={{ mysql_backup_location }} state=directory owner={{ default_user_username }} group={{ default_user_username}} mode=0750 recurse=no
+
+- name: Creates daily backup folder
+  file: path={{ mysql_daily_backup_location }} state=directory owner={{ default_user_username }} group={{ default_user_username}} mode=0750 recurse=no
+
+- name: Creates website backup folder
+  file: path={{ ivrh_website_backup_location }} state=directory owner={{ default_user_username }} group={{ default_user_username}} mode=0750 recurse=no
+
+- name: Backup production database to hostname.sql
+  command: {{ ivrh_mysql_backup_script_location }} {{ mysql_days_to_retain_backups_for }} {{ mysql_backup_location }}
+
+- name: Create easy to use copy of the file system
+  command: rsync -avz --delete {{ ivrh_default_backup_path }} {{ ivrh_website_backup_location }}
+  become: yes
+
+- name: Set file permissions so the default user can read/write
+  file:
+    path: "{{ mysql_backup_location }}"
+    owner: "{{ default_user_username }}"
+    mode: "u=rwx"
+
+- name: Ensure cron job created for regular database backups
+  cron:
+    name: "MySQL Backup cron"
+    minute: "3"
+    hour: "1"
+    job: "{{ ivrh_mysql_backup_script_location }} {{ mysql_days_to_retain_backups_for }} {{ mysql_daily_backup_location }}"
+    user: "{{ default_user_username }}"
+
+- name: Get mysqlbackup script
+  template:
+    src: "backupmysql.j2"
+    dest: "/usr/local/bin/backupmysql"
+    owner: root
+    group: root
+    mode: 0755

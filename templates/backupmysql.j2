@@ -1,0 +1,20 @@
+#!/bin/bash
+# This script is to backup all mysql databases.
+
+USER="{{ mysql_user_name }}"
+PASSWORD="{{ mysql_root_password }}"
+DAYS=$1
+OUTPUT=$2
+
+
+/usr/bin/find "$OUTPUT/" -type f -mtime +$DAYS -delete
+logger -t MYSQL_BACKUP "Removed mysql backup files older than $DAYS days"
+
+databases=`mysql --user=$USER --password=$PASSWORD -e "SHOW DATABASES;" | tr -d "| " | grep -v Database`
+
+for db in $databases; do
+    if [[ "$db" != "information_schema" ]] && [[ "$db" != _* ]] && [[ "$db" != "mysql" ]] && [[ "$db" != "performance_schema" ]] && [[ "$db" != "tmp" ]] ; then
+        logger -t MYSQL_BACKUP "Dumping database: $OUTPUT/`date +%Y-%m-%d_%T`.$db.sql.gz"
+        mysqldump --force --opt --user=$USER --password=$PASSWORD --single-transaction --databases $db | /bin/gzip > $OUTPUT/`date +%Y-%m-%d_%T`.$db.sql.gz
+    fi
+done
