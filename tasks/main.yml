@@ -32,20 +32,20 @@
     mysql_days_to_retain_backups_for: "{{ __mysql_days_to_retain_backups_for }}"
   when: mysql_days_to_retain_backups_for is not defined
 
-- name: Define ivrh_default_backup_path.
+- name: Define ivrh_source_backup_path.
   set_fact:
-    ivrh_default_backup_path: "{{ __ivrh_default_backup_path }}"
-  when: ivrh_default_backup_path is not defined
+    ivrh_source_backup_path: "{{ __ivrh_source_backup_path }}"
+  when: ivrh_source_backup_path is not defined
 
 - name: Define ivrh_mysql_backup_script_location.
   set_fact:
     ivrh_mysql_backup_script_location: "{{ __ivrh_mysql_backup_script_location }}"
   when: ivrh_mysql_backup_script_location is not defined
 
-- name: Define ivrh_website_backup_location.
+- name: Define ivrh_website_backup_destination.
   set_fact:
-    ivrh_website_backup_location: "{{ __ivrh_website_backup_location }}"
-  when: ivrh_website_backup_location is not defined
+    ivrh_website_backup_destination: "{{ __ivrh_website_backup_destination }}"
+  when: ivrh_website_backup_destination is not defined
 
 - name: Get mysqlbackup script
   template:
@@ -62,7 +62,7 @@
   file: path={{ mysql_daily_backup_location }} state=directory owner={{ default_user_username }} group={{ default_user_username}} mode=0755 recurse=yes
 
 - name: Creates website backup folder
-  file: path={{ ivrh_website_backup_location }} state=directory owner={{ default_user_username }} group={{ default_user_username}} mode=0755 recurse=yes
+  file: path={{ ivrh_website_backup_destination }} state=directory owner={{ default_user_username }} group={{ default_user_username}} mode=0755 recurse=yes
 
 - name: Check if backup destination directory mysql_backup_location already exist
   stat: path={{ mysql_backup_location }}
@@ -72,18 +72,18 @@
   command: "{{ ivrh_mysql_backup_script_location }} {{ mysql_days_to_retain_backups_for }} {{ mysql_backup_location }}/"
   when: mysql_backup_location_exists.stat.exists
 
-- name: Check if backup source directory ivrh_default_backup_path already exist
-  stat: path={{ ivrh_default_backup_path }}
-  register: ivrh_default_backup_path
+- name: Check if backup source directory ivrh_source_backup_path already exist
+  stat: path={{ ivrh_source_backup_path }}
+  register: ivrh_source_backup_path
 
-- name: Check if backup destination directory ivrh_website_backup_location already exist
-  stat: path={{ ivrh_website_backup_location }}
-  register: ivrh_website_backup_location
+- name: Check if backup destination directory ivrh_website_backup_destination already exist
+  stat: path={{ ivrh_website_backup_destination }}
+  register: ivrh_website_backup_destination
 
 - name: Create easy to use copy of the file system
   synchronize:
-    src: "{{ ivrh_default_backup_path }}"
-    dest: "{{ ivrh_website_backup_location }}"
+    src: "{{ ivrh_source_backup_path }}"
+    dest: "{{ ivrh_website_backup_destination }}"
   become: yes
 
 - name: Check if backup destination directory mysql_daily_backup_location already exist

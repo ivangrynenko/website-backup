@@ -19,10 +19,10 @@ Username and password to use with mysqldump:
 `mysql_root_password: root`
 
 Set this as the source path where your website files are stored.
-`ivrh_default_backup_path: "/var/www/html"`
+`ivrh_source_backup_path: "/var/www/html"`
 
 Set this variable to path where backup of website files will be located
-`ivrh_website_backup_location: "/home/{{ default_user_username }}/backup_website"`
+`ivrh_website_backup_destination: "/home/{{ default_user_username }}/backup_website"`
 
 Path where to upload mysql backup script
 `ivrh_mysql_backup_script_location: "/usr/local/bin/backupmysql"`
