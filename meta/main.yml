@@ -1,7 +1,7 @@
 ---
 galaxy_info:
   author: ivrh
-  description: MySQL databases backup role
+  description: Website files and MySQL databases backup role
   company: Ivan Grynenko
   license: license (GPLv2, CC-BY, etc)
   min_ansible_version: 1.9

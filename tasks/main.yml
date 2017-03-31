@@ -61,18 +61,38 @@
 - name: Creates website backup folder
   file: path={{ ivrh_website_backup_location }} state=directory owner={{ default_user_username }} group={{ default_user_username}} mode=0750 recurse=no
 
+
+- name: Check if backup destination directory mysql_backup_location already exist
+  stat: path={{ mysql_backup_location }}
+  register: mysql_backup_location_exists
+
 - name: Backup production database to hostname.sql
   command: {{ ivrh_mysql_backup_script_location }} {{ mysql_days_to_retain_backups_for }} {{ mysql_backup_location }}
+  when: mysql_backup_location_exists.stat.exists
+
+- name: Check if backup source directory ivrh_default_backup_path already exist
+  stat: path={{ ivrh_default_backup_path }}
+  register: ivrh_default_backup_path
+
+- name: Check if backup destination directory ivrh_website_backup_location already exist
+  stat: path={{ ivrh_website_backup_location }}
+  register: ivrh_website_backup_location
 
 - name: Create easy to use copy of the file system
   command: rsync -avz --delete {{ ivrh_default_backup_path }} {{ ivrh_website_backup_location }}
   become: yes
+  when: ivrh_default_backup_path.stat.exists and ivrh_website_backup_location.stat.exists
 
 - name: Set file permissions so the default user can read/write
   file:
     path: "{{ mysql_backup_location }}"
     owner: "{{ default_user_username }}"
     mode: "u=rwx"
+  when: mysql_backup_location_exists.stat.exists
+
+- name: Check if backup destination directory mysql_daily_backup_location already exist
+  stat: path={{ mysql_daily_backup_location }}
+  register: mysql_daily_backup_location
 
 - name: Ensure cron job created for regular database backups
   cron:
@@ -81,11 +101,13 @@
     hour: "1"
     job: "{{ ivrh_mysql_backup_script_location }} {{ mysql_days_to_retain_backups_for }} {{ mysql_daily_backup_location }}"
     user: "{{ default_user_username }}"
+  when: ivrh_mysql_backup_script_location is defined and mysql_days_to_retain_backups_for is defined and mysql_daily_backup_location.stat.exists
 
 - name: Get mysqlbackup script
   template:
     src: "backupmysql.j2"
-    dest: "/usr/local/bin/backupmysql"
+    dest: "{{ ivrh_mysql_backup_script_location }}"
     owner: root
     group: root
     mode: 0755
+  when: ivrh_mysql_backup_script_location is defined
