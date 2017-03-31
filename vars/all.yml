@@ -1,5 +1,5 @@
 ---
-__default_user_username: salsa
+__default_user_username: ubuntu
 __mysql_backup_location: "/home/{{ default_user_username }}/mysql_backup"
 __mysql_daily_backup_location: "/home/{{ default_user_username }}/mysql_backup_daily"
 __mysql_days_to_retain_backups_for: 30
