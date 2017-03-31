@@ -5,11 +5,11 @@ playbook:
 
 By default the files are backed up into user home folder and the backup 
 directories are created automatically. Set the username here:
-`default_user_username: ubuntu`
+`default_backup_user_username: ubuntu`
 
 Backup location definitions (taking username as a variable):
-`mysql_backup_location: "/home/{{ default_user_username }}/mysql_backup"`
-`mysql_daily_backup_location: "/home/{{ default_user_username }}/mysql_backup_daily"`
+`mysql_backup_location: "/home/{{ default_backup_user_username }}/mysql_backup"`
+`mysql_daily_backup_location: "/home/{{ default_backup_user_username }}/mysql_backup_daily"`
 
 How many days of backups to retain for
 `mysql_days_to_retain_backups_for: 30`
@@ -22,7 +22,7 @@ Set this as the source path where your website files are stored.
 `ivrh_source_backup_path: "/var/www/html"`
 
 Set this variable to path where backup of website files will be located
-`ivrh_website_backup_destination: "/home/{{ default_user_username }}/backup_website"`
+`ivrh_website_backup_destination: "/home/{{ default_backup_user_username }}/backup_website"`
 
 Path where to upload mysql backup script
 `ivrh_mysql_backup_script_location: "/usr/local/bin/backupmysql"`
@@ -34,7 +34,7 @@ Path where to upload mysql backup script
   remote_user: ubuntu
   sudo: yes
   pre_tasks:
-    - set_fact: default_user_username=yourcustomusername
+    - set_fact: default_backup_user_username=yourcustomusername
 
   vars_files:
   roles:

@@ -1,10 +1,10 @@
 ---
-__default_user_username: ubuntu
-__mysql_backup_location: "/home/{{ default_user_username }}/mysql_backup"
-__mysql_daily_backup_location: "/home/{{ default_user_username }}/mysql_backup_daily"
+__default_backup_user_username: ubuntu
+__mysql_backup_location: "/home/{{ default_backup_user_username }}/mysql_backup"
+__mysql_daily_backup_location: "/home/{{ default_backup_user_username }}/mysql_backup_daily"
 __mysql_days_to_retain_backups_for: 30
 __mysql_user_name: root
 __mysql_root_password: root
 __ivrh_source_backup_path: "/var/www/html"
-__ivrh_website_backup_destination: "/home/{{ default_user_username }}/backup_website"
+__ivrh_website_backup_destination: "/home/{{ default_backup_user_username }}/backup_website"
 __ivrh_mysql_backup_script_location: "/usr/local/bin/backupmysql"

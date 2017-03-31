@@ -12,10 +12,10 @@
     mysql_root_password: "{{ __mysql_root_password }}"
   when: mysql_root_password is not defined
 
-- name: Define default_user_username.
+- name: Define default_backup_user_username.
   set_fact:
-    default_user_username: "{{ __default_user_username }}"
-  when: default_user_username is not defined
+    default_backup_user_username: "{{ __default_backup_user_username }}"
+  when: default_backup_user_username is not defined
 
 - name: Define mysql_backup_location.
   set_fact:
@@ -56,13 +56,13 @@
     mode: 0755
 
 - name: Creates backup folder
-  file: path={{ mysql_backup_location }} state=directory owner={{ default_user_username }} group={{ default_user_username}} mode=0755 recurse=yes
+  file: path={{ mysql_backup_location }} state=directory owner={{ default_backup_user_username }} group={{ default_backup_user_username}} mode=0755 recurse=yes
 
 - name: Creates daily backup folder
-  file: path={{ mysql_daily_backup_location }} state=directory owner={{ default_user_username }} group={{ default_user_username}} mode=0755 recurse=yes
+  file: path={{ mysql_daily_backup_location }} state=directory owner={{ default_backup_user_username }} group={{ default_backup_user_username}} mode=0755 recurse=yes
 
 - name: Creates website backup folder
-  file: path={{ ivrh_website_backup_destination }} state=directory owner={{ default_user_username }} group={{ default_user_username}} mode=0755 recurse=yes
+  file: path={{ ivrh_website_backup_destination }} state=directory owner={{ default_backup_user_username }} group={{ default_backup_user_username}} mode=0755 recurse=yes
 
 - name: Check if backup destination directory mysql_backup_location already exist
   stat: path={{ mysql_backup_location }}
@@ -96,7 +96,7 @@
     minute: "3"
     hour: "1"
     job: "{{ ivrh_mysql_backup_script_location }} {{ mysql_days_to_retain_backups_for }} {{ mysql_daily_backup_location }}"
-    user: "{{ default_user_username }}"
+    user: "{{ default_backup_user_username }}"
   when: ivrh_mysql_backup_script_location is defined and mysql_days_to_retain_backups_for is defined and mysql_daily_backup_location.stat.exists
 
 - name: Get mysqlbackup script
