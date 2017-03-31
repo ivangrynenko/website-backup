@@ -28,7 +28,7 @@ Path where to upload mysql backup script
 `ivrh_mysql_backup_script_location: "/usr/local/bin/backupmysql"`
 
 ## Example playbook
----
+```
 - name: Backup all websites in all servers
   hosts: webservers
   remote_user: ubuntu
@@ -39,3 +39,4 @@ Path where to upload mysql backup script
   vars_files:
   roles:
     - { role: website-backup }
+```
