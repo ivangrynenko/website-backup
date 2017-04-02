@@ -12,25 +12,25 @@
     mysql_root_password: "{{ __mysql_root_password }}"
   when: mysql_root_password is not defined
 
-- name: Define default_backup_user_username.
+- name: Define ivrh_default_backup_user_username.
   set_fact:
-    default_backup_user_username: "{{ __default_backup_user_username }}"
-  when: default_backup_user_username is not defined
+    ivrh_default_backup_user_username: "{{ __ivrh_default_backup_user_username }}"
+  when: ivrh_default_backup_user_username is not defined
 
-- name: Define mysql_backup_location.
+- name: Define ivrh_mysql_backup_location.
   set_fact:
-    mysql_backup_location: "{{ __mysql_backup_location }}"
-  when: mysql_backup_location is not defined
+    ivrh_mysql_backup_location: "{{ __ivrh_mysql_backup_location }}"
+  when: ivrh_mysql_backup_location is not defined
 
-- name: Define mysql_daily_backup_location.
+- name: Define ivrh_mysql_daily_backup_location.
   set_fact:
-    mysql_daily_backup_location: "{{ __mysql_daily_backup_location }}"
-  when: mysql_daily_backup_location is not defined
+    ivrh_mysql_daily_backup_location: "{{ __ivrh_mysql_daily_backup_location }}"
+  when: ivrh_mysql_daily_backup_location is not defined
 
-- name: Define mysql_days_to_retain_backups_for.
+- name: Define ivrh_mysql_days_to_retain_backups_for.
   set_fact:
-    mysql_days_to_retain_backups_for: "{{ __mysql_days_to_retain_backups_for }}"
-  when: mysql_days_to_retain_backups_for is not defined
+    ivrh_mysql_days_to_retain_backups_for: "{{ __ivrh_mysql_days_to_retain_backups_for }}"
+  when: ivrh_mysql_days_to_retain_backups_for is not defined
 
 - name: Define ivrh_source_backup_path.
   set_fact:
@@ -56,21 +56,21 @@
     mode: 0755
 
 - name: Creates backup folder
-  file: path={{ mysql_backup_location }} state=directory owner={{ default_backup_user_username }} group={{ default_backup_user_username}} mode=0755 recurse=yes
+  file: path={{ ivrh_mysql_backup_location }} state=directory owner={{ ivrh_default_backup_user_username }} group={{ ivrh_default_backup_user_username}} mode=0755 recurse=yes
 
 - name: Creates daily backup folder
-  file: path={{ mysql_daily_backup_location }} state=directory owner={{ default_backup_user_username }} group={{ default_backup_user_username}} mode=0755 recurse=yes
+  file: path={{ ivrh_mysql_daily_backup_location }} state=directory owner={{ ivrh_default_backup_user_username }} group={{ ivrh_default_backup_user_username}} mode=0755 recurse=yes
 
 - name: Creates website backup folder
-  file: path={{ ivrh_website_backup_destination }} state=directory owner={{ default_backup_user_username }} group={{ default_backup_user_username}} mode=0755 recurse=yes
+  file: path={{ ivrh_website_backup_destination }} state=directory owner={{ ivrh_default_backup_user_username }} group={{ ivrh_default_backup_user_username}} mode=0755 recurse=yes
 
-- name: Check if backup destination directory mysql_backup_location already exist
-  stat: path={{ mysql_backup_location }}
-  register: mysql_backup_location_exists_path
+- name: Check if backup destination directory ivrh_mysql_backup_location already exist
+  stat: path={{ ivrh_mysql_backup_location }}
+  register: ivrh_mysql_backup_location_exists_path
 
 - name: Backup production database to hostname.sql
-  command: "{{ ivrh_mysql_backup_script_location }} {{ mysql_days_to_retain_backups_for }} {{ mysql_backup_location }}/"
-  when: mysql_backup_location_exists_path.stat.exists
+  command: "{{ ivrh_mysql_backup_script_location }} {{ ivrh_mysql_days_to_retain_backups_for }} {{ ivrh_mysql_backup_location }}/"
+  when: ivrh_mysql_backup_location_exists_path.stat.exists
 
 - name: Check if backup source directory ivrh_source_backup_path already exist
   stat: path={{ ivrh_source_backup_path }}
@@ -83,18 +83,18 @@
 - name: Create easy to use copy of the file system
   command: "rsync -a --delete {{ ivrh_source_backup_path }} {{ ivrh_website_backup_destination }}"
 
-- name: Check if backup destination directory mysql_daily_backup_location already exist
-  stat: path={{ mysql_daily_backup_location }}
-  register: mysql_daily_backup_location_path
+- name: Check if backup destination directory ivrh_mysql_daily_backup_location already exist
+  stat: path={{ ivrh_mysql_daily_backup_location }}
+  register: ivrh_mysql_daily_backup_location_path
 
 - name: Ensure cron job created for regular database backups
   cron:
     name: "MySQL Backup cron"
     minute: "3"
     hour: "1"
-    job: "{{ ivrh_mysql_backup_script_location }} {{ mysql_days_to_retain_backups_for }} {{ mysql_daily_backup_location }}"
-    user: "{{ default_backup_user_username }}"
-  when: ivrh_mysql_backup_script_location is defined and mysql_days_to_retain_backups_for is defined and mysql_daily_backup_location_path.stat.exists
+    job: "{{ ivrh_mysql_backup_script_location }} {{ ivrh_mysql_days_to_retain_backups_for }} {{ ivrh_mysql_daily_backup_location }}"
+    user: "{{ ivrh_default_backup_user_username }}"
+  when: ivrh_mysql_backup_script_location is defined and ivrh_mysql_days_to_retain_backups_for is defined and ivrh_mysql_daily_backup_location_path.stat.exists
 
 - name: Get mysqlbackup script
   template:
