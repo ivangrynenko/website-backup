@@ -82,6 +82,7 @@
 
 - name: Create easy to use copy of the file system
   command: "rsync -a --delete {{ ivrh_source_backup_path }} {{ ivrh_website_backup_destination }}"
+  when: ivrh_source_backup_path_exists.stat.exists
 
 - name: Check if backup destination directory ivrh_mysql_daily_backup_location already exist
   stat: path={{ ivrh_mysql_daily_backup_location }}
