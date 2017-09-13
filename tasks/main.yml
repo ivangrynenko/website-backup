@@ -74,7 +74,7 @@
 
 - name: Creates backup folder
   file: path={{ ivrh_mysql_backup_location }} state=directory owner={{ ivrh_default_backup_user_username }} group={{ ivrh_default_backup_user_username}} mode=0755 recurse=yes
-  when: !ivrh_mysql_backup_location_exists_path.stat.exists
+  when: ivrh_mysql_backup_location_exists_path.stat.exists == false
   tags:
     - setup
 
