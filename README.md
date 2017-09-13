@@ -35,8 +35,9 @@ Path where to upload mysql backup script
   sudo: yes
   pre_tasks:
     - set_fact: ivrh_default_backup_user_username=yourcustomusername
+    - set_fact: ivrh_backup_website=yes
 
-  vars_files:
+  vars_files: []
   roles:
     - { role: website-backup }
 ```
