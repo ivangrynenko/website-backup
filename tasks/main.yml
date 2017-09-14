@@ -96,6 +96,7 @@
   tags:
     - execute
     - setup
+- debug: msg="Backing all databases to {{ ivrh_mysql_backup_location }}"
 
 - name: Check if backup source directory ivrh_source_backup_path already exist
   stat: path={{ ivrh_source_backup_path }}
@@ -113,6 +114,7 @@
   tags:
     - execute
     - setup
+- debug: msg="Backing up website files from {{ ivrh_source_backup_path }} to {{ ivrh_website_backup_destination }}"
 
 - name: Check if backup destination directory ivrh_mysql_daily_backup_location already exist
   stat: path={{ ivrh_mysql_daily_backup_location }}
