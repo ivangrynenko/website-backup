@@ -91,6 +91,8 @@
 - name: Backup production database to hostname.sql
   command: "{{ ivrh_mysql_backup_script_location }} {{ ivrh_mysql_days_to_retain_backups_for }} {{ ivrh_mysql_backup_location }}/"
   when: ivrh_mysql_backup_location_exists_path.stat.exists
+  become: yes
+  become_user: "{{ ivrh_default_backup_user_username }}"
   tags:
     - execute
     - setup
@@ -108,6 +110,8 @@
 - name: Create easy to use copy of the file system
   command: "rsync -a --delete {{ ivrh_source_backup_path }} {{ ivrh_website_backup_destination }}"
   when: ivrh_source_backup_path_exists.stat.exists
+  become: yes
+  become_user: "{{ ivrh_default_backup_user_username }}"
   tags:
     - execute
     - setup
