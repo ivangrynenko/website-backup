@@ -1,2 +1,3 @@
 ---
 ivrh_backup_website: no
+ivrh_delete_option_for_rsync: "--delete"
