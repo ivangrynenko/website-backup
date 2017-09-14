@@ -110,8 +110,6 @@
 - name: Create easy to use copy of the file system
   command: "rsync -a --delete {{ ivrh_source_backup_path }} {{ ivrh_website_backup_destination }}"
   when: ivrh_source_backup_path_exists.stat.exists
-  become: yes
-  become_user: "{{ ivrh_default_backup_user_username }}"
   tags:
     - execute
     - setup
