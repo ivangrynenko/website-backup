@@ -114,6 +114,8 @@
   tags:
     - execute
     - setup
+
+- debug: msg="Command is - rsync -a {{ ivrh_delete_option_for_rsync }} {{ ivrh_source_backup_path }} {{ ivrh_website_backup_destination }}"
 - debug: msg="Backing up website files from {{ ivrh_source_backup_path }} to {{ ivrh_website_backup_destination }}"
 
 - name: Check if backup destination directory ivrh_mysql_daily_backup_location already exist
