@@ -7,60 +7,50 @@
   set_fact:
     mysql_user_name: "{{ __mysql_user_name }}"
   when: mysql_user_name is not defined
-  tags: always
 
 - name: Define mysql_root_password.
   set_fact:
     mysql_root_password: "{{ __mysql_root_password }}"
   when: mysql_root_password is not defined
-  tags: always
 
 - name: Define ivrh_default_backup_user_username.
   set_fact:
     ivrh_default_backup_user_username: "{{ __ivrh_default_backup_user_username }}"
   when: ivrh_default_backup_user_username is not defined
-  tags: always
 
 - name: Define ivrh_mysql_backup_location.
   set_fact:
     ivrh_mysql_backup_location: "{{ __ivrh_mysql_backup_location }}"
   when: ivrh_mysql_backup_location is not defined
-  tags: always
 
 - name: Check if backup destination directory ivrh_mysql_backup_location already exist
   stat: path={{ ivrh_mysql_backup_location }}
   register: ivrh_mysql_backup_location_exists_path
-  tags: always
 
 - name: Define ivrh_mysql_daily_backup_location.
   set_fact:
     ivrh_mysql_daily_backup_location: "{{ __ivrh_mysql_daily_backup_location }}"
   when: ivrh_mysql_daily_backup_location is not defined
-  tags: always
 
 - name: Define ivrh_mysql_days_to_retain_backups_for.
   set_fact:
     ivrh_mysql_days_to_retain_backups_for: "{{ __ivrh_mysql_days_to_retain_backups_for }}"
   when: ivrh_mysql_days_to_retain_backups_for is not defined
-  tags: always
 
 - name: Define ivrh_source_backup_path.
   set_fact:
     ivrh_source_backup_path: "{{ __ivrh_source_backup_path }}"
   when: ivrh_source_backup_path is not defined
-  tags: always
 
 - name: Define ivrh_mysql_backup_script_location.
   set_fact:
     ivrh_mysql_backup_script_location: "{{ __ivrh_mysql_backup_script_location }}"
   when: ivrh_mysql_backup_script_location is not defined
-  tags: always
 
 - name: Define ivrh_website_backup_destination.
   set_fact:
     ivrh_website_backup_destination: "{{ __ivrh_website_backup_destination }}"
   when: ivrh_website_backup_destination is not defined
-  tags: always
 
 - name: Get mysqlbackup script
   template:
@@ -101,12 +91,10 @@
 - name: Check if backup source directory ivrh_source_backup_path already exist
   stat: path={{ ivrh_source_backup_path }}
   register: ivrh_source_backup_path_exists
-  tags: always
 
 - name: Check if backup destination directory ivrh_website_backup_destination already exist
   stat: path={{ ivrh_website_backup_destination }}
   register: ivrh_website_backup_destination_path
-  tags: always
 
 - name: Create easy to use copy of the file system
   command: "rsync -a {{ ivrh_delete_option_for_rsync }} {{ ivrh_source_backup_path }} {{ ivrh_website_backup_destination }}"
@@ -121,7 +109,6 @@
 - name: Check if backup destination directory ivrh_mysql_daily_backup_location already exist
   stat: path={{ ivrh_mysql_daily_backup_location }}
   register: ivrh_mysql_daily_backup_location_path
-  tags: always
 
 - name: Ensure cron job created for regular database backups
   cron:
